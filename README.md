@@ -19,7 +19,13 @@
 
 ### Windows
 
-1. 参照リポジトリの `setup.bat` / `setup.ps1` を実行し、ツールチェイン・wchisp・WCH ISP ドライバをインストールします。
+1. 参照リポジトリのツールチェイン・wchisp・WCH ISP ドライバをインストールします。参照 README に残っている `fix/usb-c-pd-cdc-stability` は **削除済みのブランチ** なので使わないでください。参照リポジトリを持っていればその `setup.bat` を実行します。持っていなければ PowerShell で次を実行します（旧版 `install.ps1` が残っていても上書きされます）。
+
+   ```powershell
+   curl.exe -fL https://raw.githubusercontent.com/esehehelp/ch32x035f7p6-micro-devboard/main/install.ps1 -o install.ps1
+   if ($LASTEXITCODE -ne 0) { throw 'Download failed' }
+   powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\install.ps1 -Ref main
+   ```
 2. このリポジトリの **`setup.bat` をダブルクリック**します（`.ps1` のダブルクリックは Windows では実行されず、編集画面が開くことがあります）。完了/失敗の表示が出るまでウィンドウを閉じないでください。スケッチブックが標準パス以外なら `setup.bat -Sketchbook D:\Arduino` をコマンドプロンプトから実行します。`<スケッチブック>\hardware\key\ch32x035f7p6\boards.txt` ができているか確認し、Arduino IDE を再起動します。
 3. IDE でボード **CH32X035F7P6 Keypad** と CDC ポートを選択し、`firmware/keypad/keypad.ino` を開いて Verify / Upload します。CLI なら以下のコマンドを使えます。
 
