@@ -1,0 +1,19 @@
+# CH32X035F7P6 12-key keypad: USB HID keyboard + CDC upload
+ch32x035f7p6.name=CH32X035F7P6 Keypad
+
+ch32x035f7p6.upload.tool=ch32_1k2touch
+ch32x035f7p6.upload.protocol=ch32_1k2touch
+ch32x035f7p6.upload.maximum_size=63488
+ch32x035f7p6.upload.maximum_data_size=20480
+
+ch32x035f7p6.build.core=arduino
+ch32x035f7p6.build.board=CH32X035F7P6
+ch32x035f7p6.build.variant=CH32X035F7P6
+ch32x035f7p6.build.mcu=QingKe-V4C
+ch32x035f7p6.build.f_cpu=48000000L
+ch32x035f7p6.build.march=rv32imacxw
+ch32x035f7p6.build.mabi=ilp32
+ch32x035f7p6.build.ldscript=link.ld
+
+ch32x035f7p6.build.vid=0x1A86
+ch32x035f7p6.build.pid=0xFE0D
