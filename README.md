@@ -26,7 +26,7 @@
    if ($LASTEXITCODE -ne 0) { throw 'Download failed' }
    powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\install.ps1 -Ref main
    ```
-2. このリポジトリの **`setup.bat` をダブルクリック**します（`.ps1` のダブルクリックは Windows では実行されず、編集画面が開くことがあります）。完了/失敗の表示が出るまでウィンドウを閉じないでください。スケッチブックが標準パス以外なら `setup.bat -Sketchbook D:\Arduino` をコマンドプロンプトから実行します。`<スケッチブック>\hardware\key\ch32x035f7p6\boards.txt` ができているか確認し、Arduino IDE を再起動します。
+2. このリポジトリの **`setup.bat` をダブルクリック**します（`.ps1` のダブルクリックは Windows では実行されず、編集画面が開くことがあります）。完了/失敗の表示が出るまでウィンドウを閉じないでください。スケッチブックが標準パス以外なら `setup.bat -Sketchbook D:\Arduino` をコマンドプロンプトから実行します。既存の参照ボードが別の場所にあるなら `setup.bat -ToolsFrom D:\path\to\ch32x035f7p6` も指定できます。すでに keypad ボードへツールが導入済みならそのまま再利用します。実際のインストール先と使用したツールの場所が表示されるので確認し、Arduino IDE を再起動します。
 3. IDE でボード **CH32X035F7P6 Keypad** と CDC ポートを選択し、`firmware/keypad/keypad.ino` を開いて Verify / Upload します。CLI なら以下のコマンドを使えます。
 
 ### Linux
