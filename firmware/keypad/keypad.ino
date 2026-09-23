@@ -1,6 +1,9 @@
 #include <Arduino.h>
 #include <string.h>
 
+// Implemented by this board core's CDC + HID composite USB driver.
+extern "C" int ch32x_hid_send(const uint8_t report[8]);
+
 // Schematic: SW1..4=col1 PA0, SW5..8=col2 PA1, SW9..12=col3 PA2.
 // D1/D5/D9 anodes=row1 PA3; row2 PA4; row3 PA5; row4 PA6.
 // Drive one column LOW at a time; all other columns are high impedance.
