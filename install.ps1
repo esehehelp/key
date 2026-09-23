@@ -4,6 +4,26 @@ param(
     [string]$ToolsFrom
 )
 $ErrorActionPreference = 'Stop'
+$ProgressPreference = 'SilentlyContinue'
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+
+function Download-Checked([string]$Url, [string]$Path, [string]$Checksum = '') {
+    Write-Host "Downloading $Url"
+    Invoke-WebRequest -UseBasicParsing -Headers @{ 'User-Agent' = 'keypad-setup' } -Uri $Url -OutFile $Path
+    if ($Checksum) {
+        $actual = (Get-FileHash -Algorithm SHA256 -LiteralPath $Path).Hash
+        if ($actual -ine $Checksum) { throw "SHA256 mismatch for $Url" }
+    }
+}
+
+function Get-ReleaseAsset([string]$Repository, [string]$Tag, [string]$Name) {
+    $release = Invoke-RestMethod -Headers @{ 'User-Agent' = 'keypad-setup' } `
+        -Uri "https://api.github.com/repos/$Repository/releases/tags/$Tag"
+    $asset = $release.assets | Where-Object { $_.name -eq $Name } | Select-Object -First 1
+    if (-not $asset) { throw "Release asset missing: $Repository/$Tag/$Name" }
+    $sha = if ($asset.digest -like 'sha256:*') { $asset.digest.Substring(7) } else { '' }
+    return @{ Url = $asset.browser_download_url; Sha256 = $sha }
+}
 
 # Use the same sketchbook search as the reference board setup.
 if (-not $Sketchbook) {
@@ -66,9 +86,29 @@ if (-not (Test-Path -LiteralPath $gccExe)) {
         Write-Host "Compiler: $gccSource"
     }
 }
+$tempRoot = Join-Path ([IO.Path]::GetTempPath()) ('keypad-setup-' + [Guid]::NewGuid().ToString('N'))
+New-Item -ItemType Directory -Path $tempRoot | Out-Null
+try {
 if (-not (Test-Path -LiteralPath $gccExe)) {
-    throw "Board files installed to $dest, but compiler not found. Pass -ToolsFrom <reference board directory> or install the WCH compiler."
+    # Identical toolchain source/version to the reference board setup.
+    $index = Invoke-RestMethod -Uri 'https://raw.githubusercontent.com/openwch/board_manager_files/main/package_ch32v_index.json'
+    $gcc = $index.packages[0].tools | Where-Object {
+        $_.name -eq 'riscv-none-embed-gcc' -and $_.version -eq '8.2.0'
+    } | Select-Object -First 1
+    $archiveInfo = $gcc.systems | Where-Object { $_.host -eq 'i686-mingw32' } | Select-Object -First 1
+    if (-not $archiveInfo) { throw 'Windows GCC 8.2.0 not found in WCH package index.' }
+    $archive = Join-Path $tempRoot 'gcc.zip'
+    Download-Checked $archiveInfo.url $archive ($archiveInfo.checksum -replace '^SHA-256:', '')
+    $extract = Join-Path $tempRoot 'gcc'
+    Expand-Archive -LiteralPath $archive -DestinationPath $extract
+    $exe = Get-ChildItem -LiteralPath $extract -Recurse -Filter 'riscv-none-embed-gcc.exe' |
+        Select-Object -First 1
+    if (-not $exe) { throw 'GCC executable not found in WCH archive.' }
+    $gccSource = Split-Path (Split-Path $exe.FullName -Parent) -Parent
+    if (Test-Path -LiteralPath $gccDest) { Remove-Item -LiteralPath $gccDest -Recurse -Force }
+    Copy-Item -LiteralPath $gccSource -Destination $gccDest -Recurse -Force
 }
+if (-not (Test-Path -LiteralPath $gccExe)) { throw "Compiler installation failed at $gccExe" }
 
 $toolsDest = Join-Path $dest 'tools'
 foreach ($name in @('wchisp.exe', 'CH375DLL64.dll')) {
@@ -83,7 +123,27 @@ foreach ($name in @('wchisp.exe', 'CH375DLL64.dll')) {
         Copy-Item -LiteralPath $found -Destination $target -Force
         Write-Host "$name`: $found"
     } else {
-        throw "Board/compiler installed, but $name not found. Pass -ToolsFrom <reference board directory> or install the reference tools."
+        switch ($name) {
+            'wchisp.exe' {
+                $asset = Get-ReleaseAsset 'ch32-rs/wchisp' 'nightly' 'wchisp-win-x64.zip'
+                $zip = Join-Path $tempRoot 'wchisp.zip'
+                Download-Checked $asset.Url $zip $asset.Sha256
+                $extract = Join-Path $tempRoot 'wchisp'
+                Expand-Archive -LiteralPath $zip -DestinationPath $extract
+                $exe = Get-ChildItem -LiteralPath $extract -Recurse -Filter 'wchisp.exe' | Select-Object -First 1
+                if (-not $exe) { throw 'wchisp.exe not found in downloaded archive.' }
+                Copy-Item -LiteralPath $exe.FullName -Destination $target -Force
+            }
+            'CH375DLL64.dll' {
+                $asset = Get-ReleaseAsset 'MeowKJ/BinaryKeyboard' 'toolchain-linux' 'CH375DLL64.dll'
+                Download-Checked $asset.Url $target $asset.Sha256
+            }
+        }
     }
 }
 Write-Host "Installed keypad board to $dest. Restart Arduino IDE and select CH32X035F7P6 Keypad."
+Write-Host 'For first-time USB ISP, install the WCH signed driver following the reference board instructions.'
+}
+finally {
+    Remove-Item -LiteralPath $tempRoot -Recurse -Force -ErrorAction SilentlyContinue
+}

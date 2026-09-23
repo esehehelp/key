@@ -19,14 +19,8 @@
 
 ### Windows
 
-1. 参照リポジトリのツールチェイン・wchisp・WCH ISP ドライバをインストールします。参照 README に残っている `fix/usb-c-pd-cdc-stability` は **削除済みのブランチ** なので使わないでください。参照リポジトリを持っていればその `setup.bat` を実行します。持っていなければ PowerShell で次を実行します（旧版 `install.ps1` が残っていても上書きされます）。
-
-   ```powershell
-   curl.exe -fL https://raw.githubusercontent.com/esehehelp/ch32x035f7p6-micro-devboard/main/install.ps1 -o install.ps1
-   if ($LASTEXITCODE -ne 0) { throw 'Download failed' }
-   powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\install.ps1 -Ref main
-   ```
-2. このリポジトリの **`setup.bat` をダブルクリック**します（`.ps1` のダブルクリックは Windows では実行されず、編集画面が開くことがあります）。完了/失敗の表示が出るまでウィンドウを閉じないでください。スケッチブックが標準パス以外なら `setup.bat -Sketchbook D:\Arduino` をコマンドプロンプトから実行します。既存の参照ボードが別の場所にあるなら `setup.bat -ToolsFrom D:\path\to\ch32x035f7p6` も指定できます。すでに keypad ボードへツールが導入済みならそのまま再利用します。実際のインストール先と使用したツールの場所が表示されるので確認し、Arduino IDE を再起動します。
+1. このリポジトリをダウンロードして**展開**し、`setup.bat` をダブルクリックします。これだけでボード・GCC・wchisp・DLL をインストールします。既存ツールがあれば再利用し、不足分だけダウンロードします。参照ボードの古い `install.ps1` や削除済みブランチを使う必要はありません。`.ps1` だけダブルクリックしても実行されないので `setup.bat` を使用してください。
+2. 完了/失敗の表示を確認します。スケッチブックが特殊な場所ならコマンドプロンプトから `setup.bat -Sketchbook D:\Arduino` を実行できます。Arduino IDE を再起動します。**初めて** WCH USB ISP で書き込む Windows マシンでは、別途 WCH の署名済み ISP ドライバが必要です（参照ボードの手順を参照）。すでに参照ボードを書き込めているなら不要です。
 3. IDE でボード **CH32X035F7P6 Keypad** と CDC ポートを選択し、`firmware/keypad/keypad.ino` を開いて Verify / Upload します。CLI なら以下のコマンドを使えます。
 
 ### Linux
