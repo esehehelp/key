@@ -23,6 +23,7 @@ if (-not $Sketchbook) {
     }
 }
 $Sketchbook = [IO.Path]::GetFullPath($Sketchbook)
+Write-Host "Installing keypad board into $Sketchbook"
 $source = Join-Path $PSScriptRoot 'hardware\key\ch32x035f7p6'
 $reference = Join-Path $Sketchbook 'hardware\esehe\ch32x035f7p6'
 $dest = Join-Path $Sketchbook 'hardware\key\ch32x035f7p6'

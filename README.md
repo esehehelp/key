@@ -20,7 +20,7 @@
 ### Windows
 
 1. 参照リポジトリの `setup.bat` / `setup.ps1` を実行し、ツールチェイン・wchisp・WCH ISP ドライバをインストールします。
-2. このリポジトリで `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\install.ps1` を実行します。スケッチブックが標準パス以外なら `-Sketchbook D:\Arduino` を指定します。Arduino IDE を再起動します。
+2. このリポジトリの **`setup.bat` をダブルクリック**します（`.ps1` のダブルクリックは Windows では実行されず、編集画面が開くことがあります）。完了/失敗の表示が出るまでウィンドウを閉じないでください。スケッチブックが標準パス以外なら `setup.bat -Sketchbook D:\Arduino` をコマンドプロンプトから実行します。`<スケッチブック>\hardware\key\ch32x035f7p6\boards.txt` ができているか確認し、Arduino IDE を再起動します。
 3. IDE でボード **CH32X035F7P6 Keypad** と CDC ポートを選択し、`firmware/keypad/keypad.ino` を開いて Verify / Upload します。CLI なら以下のコマンドを使えます。
 
 ### Linux
