@@ -17,6 +17,7 @@ extern "C" {
 #endif
 
 #include "ch32x_regs.h"
+#include "ch32x_hid.h"
 
 /* Arduino constants */
 #define HIGH    1

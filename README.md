@@ -15,7 +15,7 @@
 
 ## Arduino IDE / CLI
 
-このリポジトリのボードパッケージは [ch32x035f7p6-micro-devboard](../ch32x035f7p6-micro-devboard) の Arduino コア・起動処理・GPIO・USB CDC・アップロードツールをコピーしたものです。**HID 複合デバイス対応だけ** `cores/arduino/ch32x_cdc.c` を拡張しています。通常の Micro Devboard ボードではなく、必ず **CH32X035F7P6 Keypad** を選択してください (FQBN `key:ch32x035f7p6:ch32x035f7p6`)。USB ID は参照 CDC 専用版の 1A86:FE0C と区別して **1A86:FE0D** です（試作用 ID。製品化時は正規の VID/PID に変更すること）。
+このリポジトリのボードパッケージは [ch32x035f7p6-micro-devboard](../ch32x035f7p6-micro-devboard) の Arduino コア・起動処理・GPIO・USB CDC・アップロードツールをコピーしたものです。**HID 複合デバイス対応だけ** `cores/arduino/ch32x_cdc.c` を拡張しています。通常の Micro Devboard ボードではなく、必ず **CH32X035F7P6 Keypad** を選択してください (FQBN `key:ch32x035f7p6:ch32x035f7p6`)。HID API はこのボードの `Arduino.h` から公開されます。`ch32x_hid.h` が見つからない場合は、ボードの選択とこのリポジトリのボードパッケージの再インストールを確認してください。USB ID は参照 CDC 専用版の 1A86:FE0C と区別して **1A86:FE0D** です（試作用 ID。製品化時は正規の VID/PID に変更すること）。
 
 ### Windows
 

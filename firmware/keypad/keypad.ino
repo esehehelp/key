@@ -1,5 +1,4 @@
 #include <Arduino.h>
-#include "ch32x_hid.h"
 #include <string.h>
 
 // Schematic: SW1..4=col1 PA0, SW5..8=col2 PA1, SW9..12=col3 PA2.
